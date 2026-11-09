@@ -2,12 +2,14 @@
 import time
 
 class Team:
-    def __init__(self, name: str, is_home: bool) -> None:
+    def __init__(self, name: str, shots_on_goal: int, is_home: bool) -> None:
         self.name = name
+        self.shots_on_goal = shots_on_goal
         self.is_home = is_home
         self.goals = 0
 
 valid_teams: list = [
+
     "HIFK",
     "HPK",
     "Ilves",
@@ -27,40 +29,43 @@ valid_teams: list = [
     "Ässät"
                      ]
 
+def period(length: int):
+        for i in range(0, length + 1):
+            time.sleep(0.5)
+            print(i)
+
 def game():
 
-    print("===== Welcome to tonight's Liiga game! =====")
+    print("\n===== Welcome to tonight's Liiga game! =====\n")
     time.sleep(1)
 
     valid_teams_normalized = {team.casefold() for team in valid_teams}
 
-    your_name = input("Choose your team: ")
-    opponent_name = input("Choose opponent team: ")
-    if your_name.lower() not in valid_teams_normalized or opponent_name.lower() not in valid_teams_normalized:
-        print("Choose a valid Liiga team!")
-        return 
-        
+    # If both teams are valid, break while loop and continue executing, else print an error message
+    while True:
+        your_name = input("Choose your team: ").strip()
+        opponent_name = input("Choose opponent team: ").strip()
 
-    your_is_home: bool = input("Is your team at home? (y/n): ").strip().lower() == "y"
+        if (
+            your_name.casefold() in valid_teams_normalized
+            and opponent_name.casefold() in valid_teams_normalized
+        ):
+            break
+
+        time.sleep(0.2)
+        print("\nChoose a valid Liiga team!\n")
+        
+    your_is_home: bool = input("Is your team at home? (y/n): ").casefold() == "y"
 
     your_team = Team(your_name, your_is_home)
     opponent_team = Team(opponent_name, not your_is_home)
 
     time.sleep(0.5)
+
     if your_team.is_home:
         print(f"\nGame on: {your_team.name} vs. {opponent_team.name} !\n")
     else:
         print(f"\nGame on: {opponent_team.name} vs. {your_team.name} !\n")
 
-    period_length: int = 20
-
-    def period(period_length):
-        for i in range(0, period_length + 1):
-            time.sleep(0.5)
-            print(i)
-
 game()
-
-
-
-
+period(20)
