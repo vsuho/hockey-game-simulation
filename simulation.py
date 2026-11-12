@@ -29,6 +29,7 @@ valid_teams: list = [
     "Ässät"
                      ]
 
+### Function for period with given length, returns goals tuple
 def period(length: int, home_team: Team, away_team: Team) -> tuple[int, int]:
         possibility_of_goal = 0.05
 
@@ -46,9 +47,22 @@ def period(length: int, home_team: Team, away_team: Team) -> tuple[int, int]:
 
         return (home_team.goals, away_team.goals)
 
+
+### Function for overtime when game is tied after 60
+def overtime(home_team: Team, away_team: Team) -> None:
+    print(f"Game is tied at {home_team.goals} - {away_team.goals}, heading to overtime...")
+    time.sleep(5)
+    period(5, home_team, away_team)
+    if home_team.goals != away_team.goals:
+        final_score()
+    else:
+        shootout(home_team, away_team)
+
+### Function for shootout when game is tied after overtime
 def shootout(home_team: Team, away_team: Team) -> None:
     # Heads or tails guess to pick who goes first
     your_choice = input("Let's pick which team goes first. Heads or tails? (h/t) : ").casefold()
+    time.sleep(1)
     if your_choice == "h":
         print("You picked heads.")
     elif your_choice == "t":
@@ -57,20 +71,19 @@ def shootout(home_team: Team, away_team: Team) -> None:
         print("Type h or t")
         return
 
+    time.sleep(1)
     print("Let's toss the coin: ")
 
     coin_toss = random.choice(("h", "t"))
-    print(f"The coin landed on {'heads' if coin_toss == 'h' else 'tails'}.")
+    time.sleep(1)
+    print(f"The coin landed on {'heads' if coin_toss == "h" else "tails"}.")
 
     first_team = home_team if coin_toss == "h" else away_team
+    time.sleep(0.5)
     print(f"{first_team.name} goes first.")
 
 
-
-    
-
-
-
+### Function for getting the teams and choosing home team, returns teams tuple
 def game_preparations() -> tuple[Team, Team]:
 
     print("\n===== Welcome to tonight's Liiga game! =====\n")
@@ -110,30 +123,30 @@ def game_preparations() -> tuple[Team, Team]:
 
     return (home_team, away_team)
 
+### Function to print final_score
+def final_score() -> None:
+    print(f"\n ====== FINAL SCORE: {home_team.name} {home_team.goals} -"
+                f" {away_team.goals} {away_team.name} ====== \n"
+                )
+
+### Function to go through the whole game
 def full_game(home_team: Team, away_team: Team) -> None:
     # Three periods
     for period_number in range(1, 4):
         print(f"\nPeriod {period_number}\n")
         period(20, home_team, away_team)
         print(f"\nPeriod {period_number} over:\n Score: {home_team.goals} - {away_team.goals}")
-        if period_number < 3: print(f"\n Heading to period {period_number + 1}...")
-
         if period_number < 3:
+            print(f"\n Heading to period {period_number + 1}...")
             time.sleep(2)
 
     # After three periods: check if game is not tied 
     if home_team.goals != away_team.goals:    
-        print(f"\n ====== FINAL SCORE: {home_team.name} {home_team.goals} -"
-            f" {away_team.goals} {away_team.name} ====== \n"
-            )
-        
+        final_score()
         # Game is tied after 60, overtime begins
     else:
-        print(f"Game is tied at {home_team.goals} - {away_team.goals}, heading to overtime...")
-        time.sleep(5)
-        period(5, home_team, away_team)
+       overtime(home_team, away_team)
 
 home_team, away_team = game_preparations()
 final_result = full_game(home_team, away_team)
-#shootout(home_team, away_team)
 
